@@ -1,5 +1,12 @@
 ## Welcome!
-This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+For Team 14574: fork repo into your account. 
+open repo using vcs in android studio
+make sure builds and things are running
+configure multidex(if needed) and standardize apk version
+set up git remote
+
+This GitHub repository contains the source code that is used to build an Android
+app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
 If you are new to the *FIRST* Tech Challenge software and control system, you should visit the online wiki to learn how to install, configure, and use the software and control system:
 
