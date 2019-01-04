@@ -95,7 +95,7 @@ abstract public class HolonomicFourWheelDrivetrain extends Drivetrain implements
         double[] motorPowers = new double[4]; //creates a array to put the motor powers into
         for (int i = 0; i < 4; i++) {
             motorPowers[i] = calculateWheelPower(course, getVelocity(), rotation, wheelAngles[i]);
-            motors[i].setPower(motorPowers[i]);
+            motors[i].setPower(motorPowers[i]*0.6);
         }
         return motorPowers;
     }
