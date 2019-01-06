@@ -152,7 +152,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
 
 
-            /*while (opModeIsActive()) {
+            while (opModeIsActive()) {
                 if (tfod != null) {
                     CameraDevice.getInstance().setFlashTorchMode(true);
                     // getUpdatedRecognitions() will return null if no new information is available since
@@ -177,10 +177,26 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                 if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                                     telemetry.addData("Gold Mineral Position", "Left");
                                     CameraDevice.getInstance().setFlashTorchMode(false);
+                                    FORWARD_SPEED = 0.3;
+                                    runtime.reset();
+                                    leftBackDrive.setPower(-FORWARD_SPEED);
+                                    rightBackDrive.setPower(FORWARD_SPEED);
+                                    leftFrontDrive.setPower(FORWARD_SPEED);
+                                    rightFrontDrive.setPower(-FORWARD_SPEED);
+                                    while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                        telemetry.update();
+                                    }
+
+                                    FORWARD_SPEED = 0.4;
                                     leftBackDrive.setPower(FORWARD_SPEED);
                                     rightBackDrive.setPower(FORWARD_SPEED);
                                     leftFrontDrive.setPower(FORWARD_SPEED);
                                     rightFrontDrive.setPower(FORWARD_SPEED);
+                                    while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                        telemetry.update();
+                                    }
                                     while (opModeIsActive() && (runtime.seconds() < 1.0)) {
                                         telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                         telemetry.update();
@@ -211,7 +227,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                         telemetry.update();
                     }
                 }
-            }*/
+            }
         }
 
           /*landingSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -222,27 +238,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
 
 
-        FORWARD_SPEED = 0.3;
-        runtime.reset();
-        leftBackDrive.setPower(-FORWARD_SPEED);
-        rightBackDrive.setPower(FORWARD_SPEED);
-        leftFrontDrive.setPower(FORWARD_SPEED);
-        rightFrontDrive.setPower(-FORWARD_SPEED);
-        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
 
-        //Recog(3000);
-        FORWARD_SPEED = 0.4;
-        leftBackDrive.setPower(FORWARD_SPEED);
-        rightBackDrive.setPower(FORWARD_SPEED);
-        leftFrontDrive.setPower(FORWARD_SPEED);
-        rightFrontDrive.setPower(FORWARD_SPEED);
-        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
 
         if (tfod != null) {
             tfod.shutdown();
