@@ -56,7 +56,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "TensorFlowAuto", group = "auto")
+@Autonomous(name = "PRP", group = "auto")
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -160,23 +160,24 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() == 3) {
+                        if (updatedRecognitions.size() == 2) {
                             int goldMineralX = -1;
                             int silverMineral1X = -1;
                             int silverMineral2X = -1;
                             for (Recognition recognition : updatedRecognitions) {
                                 if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                    goldMineralX = (int) recognition.getLeft();
+                                    goldMineralX = (int) recognition.getTop();
                                 } else if (silverMineral1X == -1) {
-                                    silverMineral1X = (int) recognition.getLeft();
+                                    silverMineral1X = (int) recognition.getTop();
                                 } else {
-                                    silverMineral2X = (int) recognition.getLeft();
+                                    silverMineral2X = (int) recognition.getTop();
                                 }
                             }
-                            if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                    telemetry.addData("Gold Mineral Position", "Left");
+
+                                if (goldMineralX == -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                                    telemetry.addData("Gold Mineral Position", "Right");
                                     CameraDevice.getInstance().setFlashTorchMode(false);
+
                                     FORWARD_SPEED = 0.3;
                                     runtime.reset();
                                     leftBackDrive.setPower(-FORWARD_SPEED);
@@ -188,41 +189,92 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         telemetry.update();
                                     }
 
-                                    FORWARD_SPEED = 0.4;
-                                    leftBackDrive.setPower(FORWARD_SPEED);
-                                    rightBackDrive.setPower(FORWARD_SPEED);
-                                    leftFrontDrive.setPower(FORWARD_SPEED);
-                                    rightFrontDrive.setPower(FORWARD_SPEED);
-                                    while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-                                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                                        telemetry.update();
-                                    }
-                                    while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-                                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    FORWARD_SPEED = 0.45;
+
+                                    leftBackDrive.setPower(-FORWARD_SPEED);
+                                    rightBackDrive.setPower(-FORWARD_SPEED);
+                                    leftFrontDrive.setPower(-FORWARD_SPEED);
+                                    rightFrontDrive.setPower(-FORWARD_SPEED);
+                                    while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+                                        telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
                                         telemetry.update();
                                     }
                                     //second part(move the actual game object)
+                                    FORWARD_SPEED = 0.3;
 
                                     leftBackDrive.setPower(-FORWARD_SPEED);
                                     rightBackDrive.setPower(FORWARD_SPEED);
                                     leftFrontDrive.setPower(FORWARD_SPEED);
                                     rightFrontDrive.setPower(-FORWARD_SPEED);
-                                    while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-                                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                        telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                         telemetry.update();
                                     }
 
-
                                     tfod.deactivate();
                                     //encoderDrive(0.5, 4, 4, 4, 4, 7.0);
-                                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                    CameraDevice.getInstance().setFlashTorchMode(false);
-                                    telemetry.addData("Gold Mineral Position", "Right");
-                                } else {
-                                    telemetry.addData("Gold Mineral Position", "Center");
-                                    CameraDevice.getInstance().setFlashTorchMode(false);
                                 }
-                            }
+                                else if (goldMineralX != -1 && silverMineral1X != -1) {
+                                    // ... if the gold is to the right of the silver, the gold is in the center ...
+
+
+                                    if (goldMineralX > silverMineral1X) {
+                                        telemetry.addData("Gold Mineral Position", "Center");
+                                        FORWARD_SPEED = 0.4;
+                                        runtime.reset();
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(FORWARD_SPEED);
+                                        leftFrontDrive.setPower(FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 4)) {
+                                            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+                                        telemetry.update();
+                                    }
+
+                                    // ... otherwise it is on the left
+
+                                    else {
+                                        telemetry.addData("Gold Mineral Position", "Left");
+
+
+                                        FORWARD_SPEED = 0.3;
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(FORWARD_SPEED);
+                                        leftFrontDrive.setPower(FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+                                        runtime.reset();
+                                        FORWARD_SPEED = 0.40;
+                                        leftBackDrive.setPower(FORWARD_SPEED);
+                                        rightBackDrive.setPower(FORWARD_SPEED);
+                                        leftFrontDrive.setPower(FORWARD_SPEED);
+                                        rightFrontDrive.setPower(FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+                                            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+                                        //second part(move the actual game object)
+                                        FORWARD_SPEED = 0.3;
+
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(FORWARD_SPEED);
+                                        leftFrontDrive.setPower(FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+
+                                        telemetry.update();
+                                    }
+                                }
+
+
                         }
                         telemetry.update();
                     }

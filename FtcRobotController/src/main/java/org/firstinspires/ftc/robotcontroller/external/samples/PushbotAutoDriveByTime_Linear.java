@@ -66,6 +66,7 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
     public DcMotor rightFrontDrive;
     public DcMotor leftBackDrive;
     public DcMotor rightBackDrive;
+    public DcMotor latch;
 
 
       double     FORWARD_SPEED = 0.6;
@@ -78,6 +79,8 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf");
         leftBackDrive = hardwareMap.get(DcMotor.class, "ld");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rd");
+        latch = hardwareMap.get(DcMotor.class, "latch");
+
 
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -90,30 +93,34 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
-
+        latch.setPower(1);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        latch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        latch.setTargetPosition(-400);
+        latch.setPower(0.8);
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
         // Step 1:  Drive forward for 3 seconds
-        FORWARD_SPEED = 0.26;
+        runtime.reset();
+
+
+        /*FORWARD_SPEED = 0.3;
         leftBackDrive.setPower(-FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
         leftFrontDrive.setPower(FORWARD_SPEED);
         rightFrontDrive.setPower(-FORWARD_SPEED);
-        while (opModeIsActive() && (runtime.seconds() < 1.6)) {
+        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
-
 
         FORWARD_SPEED = 0.4;
         leftBackDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
         leftFrontDrive.setPower(FORWARD_SPEED);
         rightFrontDrive.setPower(FORWARD_SPEED);
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
+        while (opModeIsActive() && (runtime.seconds() < 2)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -132,6 +139,6 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);
+        sleep(1000);*/
     }
 }
