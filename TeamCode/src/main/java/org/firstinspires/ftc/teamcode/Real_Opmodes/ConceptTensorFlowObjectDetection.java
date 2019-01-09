@@ -56,7 +56,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "PRP", group = "auto")
+@Autonomous(name = "FinalAuto", group = "auto")
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -176,7 +176,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
                                 if (goldMineralX == -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                                     telemetry.addData("Gold Mineral Position", "Right");
-                                    CameraDevice.getInstance().setFlashTorchMode(false);
+                                    CameraDevice.getInstance().setFlashTorchMode(true);
 
                                     FORWARD_SPEED = 0.3;
                                     runtime.reset();
@@ -219,27 +219,10 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
 
                                     if (goldMineralX > silverMineral1X) {
-                                        telemetry.addData("Gold Mineral Position", "Center");
-                                        FORWARD_SPEED = 0.4;
-                                        runtime.reset();
-                                        leftBackDrive.setPower(-FORWARD_SPEED);
-                                        rightBackDrive.setPower(FORWARD_SPEED);
-                                        leftFrontDrive.setPower(FORWARD_SPEED);
-                                        rightFrontDrive.setPower(-FORWARD_SPEED);
-                                        while (opModeIsActive() && (runtime.seconds() < 4)) {
-                                            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                                            telemetry.update();
-                                        }
-                                        telemetry.update();
-                                    }
-
-                                    // ... otherwise it is on the left
-
-                                    else {
                                         telemetry.addData("Gold Mineral Position", "Left");
-
-
+                                        CameraDevice.getInstance().setFlashTorchMode(true);
                                         FORWARD_SPEED = 0.3;
+                                        runtime.reset();
                                         leftBackDrive.setPower(-FORWARD_SPEED);
                                         rightBackDrive.setPower(FORWARD_SPEED);
                                         leftFrontDrive.setPower(FORWARD_SPEED);
@@ -248,7 +231,6 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                             telemetry.update();
                                         }
-                                        runtime.reset();
                                         FORWARD_SPEED = 0.40;
                                         leftBackDrive.setPower(FORWARD_SPEED);
                                         rightBackDrive.setPower(FORWARD_SPEED);
@@ -270,6 +252,70 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                             telemetry.update();
                                         }
 
+                                        leftBackDrive.setPower(FORWARD_SPEED);
+                                        rightBackDrive.setPower(-FORWARD_SPEED);
+                                        leftFrontDrive.setPower(-FORWARD_SPEED);
+                                        rightFrontDrive.setPower(FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                            telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(-FORWARD_SPEED);
+                                        leftFrontDrive.setPower(-FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                            telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+
+
+
+
+
+                                        tfod.deactivate();
+                                    }
+
+
+                                    // ... otherwise it is on the left
+
+                                    else {
+                                        telemetry.addData("Gold Mineral Position", "Center");
+                                        CameraDevice.getInstance().setFlashTorchMode(true);
+                                        FORWARD_SPEED = 0.3;
+                                        runtime.reset();
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(FORWARD_SPEED);
+                                        leftFrontDrive.setPower(FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 4)) {
+                                            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+
+                                        leftBackDrive.setPower(FORWARD_SPEED);
+                                        rightBackDrive.setPower(-FORWARD_SPEED);
+                                        leftFrontDrive.setPower(-FORWARD_SPEED);
+                                        rightFrontDrive.setPower(FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+
+                                        leftBackDrive.setPower(-FORWARD_SPEED);
+                                        rightBackDrive.setPower(-FORWARD_SPEED);
+                                        leftFrontDrive.setPower(-FORWARD_SPEED);
+                                        rightFrontDrive.setPower(-FORWARD_SPEED);
+                                        while (opModeIsActive() && (runtime.seconds() < 3)) {
+                                            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                            telemetry.update();
+                                        }
+                                        telemetry.update();
+
+
+
+                                        tfod.deactivate();
                                         telemetry.update();
                                     }
                                 }
