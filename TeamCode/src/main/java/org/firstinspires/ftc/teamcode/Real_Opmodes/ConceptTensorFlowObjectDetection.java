@@ -101,6 +101,8 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
+
+
     @Override
     public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -112,7 +114,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf");
         leftBackDrive = hardwareMap.get(DcMotor.class, "ld");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rd");
-        landingSlide = hardwareMap.get(DcMotor.class, "landslide");
+        landingSlide = hardwareMap.get(DcMotor.class, "latch");
         double     FORWARD_SPEED = 0.6;
 
 
@@ -120,6 +122,8 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        runtime.reset();
+        landingSlide.setPower(-0.6);
 
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -133,6 +137,12 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        landingSlide.setPower(0.2);
+        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
         /*landingSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         landingSlide.setTargetPosition(-200);
         landingSlide.setPower(0.8);
@@ -143,8 +153,52 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
 
 
+        FORWARD_SPEED = 0.2;
+        runtime.reset();
+        leftBackDrive.setPower(-FORWARD_SPEED);
+        rightBackDrive.setPower(-FORWARD_SPEED);
+        leftFrontDrive.setPower(-FORWARD_SPEED);
+        rightFrontDrive.setPower(-FORWARD_SPEED);
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
 
-        if (opModeIsActive()) {
+        FORWARD_SPEED = 0.2;
+        runtime.reset();
+        leftBackDrive.setPower(-FORWARD_SPEED);
+        rightBackDrive.setPower(FORWARD_SPEED);
+        leftFrontDrive.setPower(FORWARD_SPEED);
+        rightFrontDrive.setPower(-FORWARD_SPEED);
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+        FORWARD_SPEED = 0.3;
+        runtime.reset();
+        leftBackDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(FORWARD_SPEED);
+        leftFrontDrive.setPower(FORWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        while (opModeIsActive() && (runtime.seconds() < 2.5)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+        int Finished = 0;
+        FORWARD_SPEED = 0.3;
+        runtime.reset();
+        leftBackDrive.setPower(FORWARD_SPEED);
+        rightBackDrive.setPower(-FORWARD_SPEED);
+        leftFrontDrive.setPower(-FORWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
+        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+            Finished = 1;
+        }
+
+        if (opModeIsActive() && Finished == 1) {
             /** Activate Tensor Flow Object Detection. */
             if (tfod != null) {
                 tfod.activate();
@@ -164,6 +218,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                             int goldMineralX = -1;
                             int silverMineral1X = -1;
                             int silverMineral2X = -1;
+
                             for (Recognition recognition : updatedRecognitions) {
                                 if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                     goldMineralX = (int) recognition.getTop();
@@ -206,7 +261,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                     rightBackDrive.setPower(FORWARD_SPEED);
                                     leftFrontDrive.setPower(FORWARD_SPEED);
                                     rightFrontDrive.setPower(-FORWARD_SPEED);
-                                    while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                    while (opModeIsActive() && (runtime.seconds() < 2)) {
                                         telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                         telemetry.update();
                                     }
@@ -247,12 +302,12 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         rightBackDrive.setPower(FORWARD_SPEED);
                                         leftFrontDrive.setPower(FORWARD_SPEED);
                                         rightFrontDrive.setPower(-FORWARD_SPEED);
-                                        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                                        while (opModeIsActive() && (runtime.seconds() < 2)) {
                                             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                             telemetry.update();
                                         }
 
-                                        leftBackDrive.setPower(FORWARD_SPEED);
+                                       /* leftBackDrive.setPower(FORWARD_SPEED);
                                         rightBackDrive.setPower(-FORWARD_SPEED);
                                         leftFrontDrive.setPower(-FORWARD_SPEED);
                                         rightFrontDrive.setPower(FORWARD_SPEED);
@@ -268,7 +323,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         while (opModeIsActive() && (runtime.seconds() < 1.5)) {
                                             telemetry.addData("Path", "Leg 4: %2.5f S Elapsed", runtime.seconds());
                                             telemetry.update();
-                                        }
+                                        }*/
 
 
 
@@ -284,7 +339,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         telemetry.addData("Gold Mineral Position", "Center");
                                         CameraDevice.getInstance().setFlashTorchMode(true);
                                         FORWARD_SPEED = 0.3;
-                                        runtime.reset();
+                                        /*runtime.reset(); todo: uncomment this for god
                                         leftBackDrive.setPower(-FORWARD_SPEED);
                                         rightBackDrive.setPower(FORWARD_SPEED);
                                         leftFrontDrive.setPower(FORWARD_SPEED);
@@ -292,9 +347,11 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         while (opModeIsActive() && (runtime.seconds() < 4)) {
                                             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                             telemetry.update();
-                                        }
+                                        }*/
 
-                                        leftBackDrive.setPower(FORWARD_SPEED);
+                                        encoderDrive(0.3, 300, -300, 300, -300, 7.0);
+
+                                        /*leftBackDrive.setPower(FORWARD_SPEED);
                                         rightBackDrive.setPower(-FORWARD_SPEED);
                                         leftFrontDrive.setPower(-FORWARD_SPEED);
                                         rightFrontDrive.setPower(FORWARD_SPEED);
@@ -310,7 +367,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                                         while (opModeIsActive() && (runtime.seconds() < 3)) {
                                             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                             telemetry.update();
-                                        }
+                                        }*/
                                         telemetry.update();
 
 
@@ -411,7 +468,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                         // is not visible, and must be on the right
 
                         if (goldMineralX == -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                            telemetry.addData("Gold Mineral Position", "Right");
+                            telemetry.addData("Gold Mineral Position", "Left");
                             Position = "RIGHT";
                             telemetry.update();
                         }
@@ -422,7 +479,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
 
                             if (goldMineralX > silverMineral1X) {
-                                telemetry.addData("Gold Mineral Position", "Center");
+                                telemetry.addData("Gold Mineral Position", "Right");
                                 Position = "CENTER";
                                 telemetry.addData("Position", Position);
                                 telemetry.update();
@@ -461,10 +518,10 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (leftFrontInches * COUNTS_PER_INCH);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (rightFrontInches * COUNTS_PER_INCH);
-            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
-            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int) (rightBackInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (leftFrontInches  );
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (rightFrontInches );
+            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int) (leftBackInches );
+            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int) (rightBackInches);
             leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             rightFrontDrive.setTargetPosition(newRightFrontTarget);
             leftBackDrive.setTargetPosition(newLeftBackTarget);
